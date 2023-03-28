@@ -1,4 +1,4 @@
-# This is the source code for Bourbonjosh's app for exercises 1.1 to 1.5
+# This is the source code for Bourbonjosh's app for exercises 2.1 to 2.5
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
