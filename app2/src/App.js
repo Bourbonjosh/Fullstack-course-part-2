@@ -20,17 +20,34 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filterName, setFilterName] = useState('');
   
-  const hook = () => {
-    console.log('pass useEffect');
+  const axiosHook = () => {
+    console.log('through axios hook');
     axios
       .get('http://localhost:3001/persons')
       .then(response => {
-        console.log('promise fullfilled');
+        console.log('axios promise is fullfilled');
+        console.log('response.data :', response.data);
         setPersons(response.data);
       })
   }
 
-  useEffect(hook, []);
+  useEffect(axiosHook, []);
+
+  // And that's how you do it using fetch() instead of axios
+  // -------------------------------------------------------
+  
+  /*const fetchHook = () => {
+    console.log('through fetch hook');
+    fetch('http://localhost:3001/persons')
+      .then(async response => {
+        console.log('fetch promise fullfilled');
+        const data = await response.json();
+        console.log('data :', data);
+        setPersons(data);
+      })
+  }
+
+  useEffect(fetchHook, []);*/
 
 
   const filteredPersons = persons.filter(p => p.name.toLowerCase().includes(filterName.toLowerCase()));
