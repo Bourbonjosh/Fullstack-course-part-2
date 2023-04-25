@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+//import axios from 'axios'
+import personsService from './services/persons'
 
 const Person = (props) => <p>{props.name} {props.number}</p>
 const Filter = (props) => <div>filter shown with: <input value={props.value} onChange={props.onChange} /></div>
@@ -19,8 +20,16 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filterName, setFilterName] = useState('');
+
+  useEffect(() => {
+    personsService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])
   
-  const axiosHook = () => {
+  /*const axiosHook = () => {
     console.log('through axios hook');
     axios
       .get('http://localhost:3001/persons')
@@ -31,7 +40,7 @@ const App = () => {
       })
   }
 
-  useEffect(axiosHook, []);
+  useEffect(axiosHook, []);*/
 
   // And that's how you do it using fetch() instead of axios
   // -------------------------------------------------------
@@ -59,12 +68,16 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     }
     else {
-      const nameObject = {
+      const personObject = {
         name: newName,
         number: newNumber,
         id: persons.length + 1,
       }
-      setPersons(persons.concat(nameObject));
+      personsService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson));          
+        });      
       setNewName('');
       setNewNumber('');
     }
