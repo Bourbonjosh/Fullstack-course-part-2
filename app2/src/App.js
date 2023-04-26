@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 //import axios from 'axios'
 import personsService from './services/persons'
 
-const Person = (props) => <p>{props.name} {props.number}</p>
+const Person = (props) => <p>{props.name} {props.number} <button onClick={props.remPersonCB}>delete</button></p>
 const Filter = (props) => <div>filter shown with: <input value={props.value} onChange={props.onChange} /></div>
 const PersonForm = (props) => {
   return(
@@ -76,12 +76,28 @@ const App = () => {
       personsService
         .create(personObject)
         .then(returnedPerson => {
+          console.log("Here is the response from post : ", returnedPerson);
           setPersons(persons.concat(returnedPerson));          
         });      
       setNewName('');
       setNewNumber('');
     }
   }
+
+  const remPerson = (id, name) => {
+    if (window.confirm(`Do you really want to delete ${name} ?`))
+    {
+      personsService
+        .remove(id)
+        .then(returnedResponseData => {
+          console.log("Here is the response from delete : ", returnedResponseData);
+          const shorterPersons = persons.filter(p => p.id !== id);
+          setPersons(shorterPersons);
+        })
+      
+      
+    }
+  }    
 
   const handleFilterNameChange =(event) => {
     setFilterName(event.target.value);
@@ -104,7 +120,7 @@ const App = () => {
       <h2>Numbers</h2>
       <div>
           {filteredPersons.map(p =>
-            <Person key={p.id} name={p.name} number={p.number} />
+            <Person key={p.id} name={p.name} number={p.number} remPersonCB={() => remPerson(p.id, p.name)} />
           )}
       </div>
       
