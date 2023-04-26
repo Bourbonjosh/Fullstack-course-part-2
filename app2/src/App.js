@@ -61,11 +61,20 @@ const App = () => {
 
   const filteredPersons = persons.filter(p => p.name.toLowerCase().includes(filterName.toLowerCase()));
 
-  const addPerson = (event) => {
+  const addOrModifyPerson = (event) => {
     event.preventDefault();
-    const isNameUnique = persons.every(p => p.name !== newName);
-    if (!isNameUnique) {
-      alert(`${newName} is already added to phonebook`);
+    const existingPerson = persons.find(p => p.name == newName);
+    if (typeof existingPerson !== 'undefined') {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one ?`)) {
+        const updatedPerson = {...existingPerson, number: newNumber};
+        personsService
+          .update(updatedPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
+            setNewName('');
+            setNewNumber('');
+          }) 
+      }
     }
     else {
       const personObject = {
@@ -77,10 +86,10 @@ const App = () => {
         .create(personObject)
         .then(returnedPerson => {
           console.log("Here is the response from post : ", returnedPerson);
-          setPersons(persons.concat(returnedPerson));          
-        });      
-      setNewName('');
-      setNewNumber('');
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');        
+        }); 
     }
   }
 
@@ -91,8 +100,7 @@ const App = () => {
         .remove(id)
         .then(returnedResponseData => {
           console.log("Here is the response from delete : ", returnedResponseData);
-          const shorterPersons = persons.filter(p => p.id !== id);
-          setPersons(shorterPersons);
+          setPersons(persons.filter(p => p.id !== id));
         })
       
       
@@ -116,7 +124,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={filterName} onChange={handleFilterNameChange} />      
       <h2>add a new</h2>
-      <PersonForm submit={addPerson} newName={newName} nameChange={handleNameChange} newNumber={newNumber} numberChange={handleNumberChange} />      
+      <PersonForm submit={addOrModifyPerson} newName={newName} nameChange={handleNameChange} newNumber={newNumber} numberChange={handleNumberChange} />      
       <h2>Numbers</h2>
       <div>
           {filteredPersons.map(p =>
