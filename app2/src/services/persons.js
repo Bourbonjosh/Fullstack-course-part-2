@@ -3,22 +3,13 @@ import axios from 'axios'
 const baseUrl = 'http://localhost:3001/persons'
 
 
-const getAll = () => axios
-                       .get(baseUrl)
-                       .then(response => response.data);
+const getAll = async () => (await axios.get(baseUrl)).data;                      
                       
-const create = newObject => axios
-                              .post(baseUrl, newObject)
-                              .then(response => {console.log('then of axios create'); return response.data});
+const create = async (newObject) => (await axios.post(baseUrl, newObject)).data;
 
-const remove = id => axios
-                       .delete(`${baseUrl}/${id}`)
-                       .then(response => {console.log('then of axios remove'); return response.data});
+const remove = async (id) => (await axios.delete(`${baseUrl}/${id}`)).data;
 
-
-const update = (id, newObject) => axios
-                                    .put(`${baseUrl}/${id}`, newObject)
-                                    .then(response => {console.log('then of axios update'); return response.data});
+const update = async (id, newObject) => (await axios.put(`${baseUrl}/${id}`, newObject)).data;
 
 // And that's how you do it using fetch() instead of axios
 // -------------------------------------------------------
