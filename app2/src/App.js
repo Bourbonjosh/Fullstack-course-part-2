@@ -22,6 +22,7 @@ const App = () => {
   const [filterName, setFilterName] = useState('');
 
   useEffect(() => {
+    //console.log("My useeffect");
     personsService
       .getAll()
       .then(initialPersons => {
