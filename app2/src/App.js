@@ -21,13 +21,21 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filterName, setFilterName] = useState('');
 
-  useEffect(() => {
+  /*useEffect(() => {
     //console.log("My useeffect");
     personsService
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
       })
+  }, [])*/
+
+  useEffect(() => {
+    const loadInitialPersons = async () => {
+      const initialPersons = await personsService.getAll();
+      setPersons(initialPersons)
+    }
+    loadInitialPersons();
   }, [])
   
   /*const axiosHook = () => {
@@ -62,7 +70,7 @@ const App = () => {
 
   const filteredPersons = persons.filter(p => p.name.toLowerCase().includes(filterName.toLowerCase()));
 
-  const addOrModifyPerson = (event) => {
+  /*const addOrModifyPerson = (event) => {
     event.preventDefault();
     const existingPerson = persons.find(p => p.name == newName);
     if (typeof existingPerson !== 'undefined') {
@@ -71,6 +79,8 @@ const App = () => {
         personsService
           .update(updatedPerson.id, updatedPerson)
           .then(returnedPerson => {
+            console.log("Here is the response from put : ", returnedPerson);
+            console.log("id :", returnedPerson.id);
             setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
             setNewName('');
             setNewNumber('');
@@ -92,9 +102,43 @@ const App = () => {
           setNewNumber('');        
         }); 
     }
+  }*/
+
+  const addOrModifyPerson = (event) => {
+    event.preventDefault();
+    const existingPerson = persons.find(p => p.name == newName);
+    if (typeof existingPerson !== 'undefined') {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one ?`)) {
+        const updatedPerson = {...existingPerson, number: newNumber};
+        const updatePerson = async () => {
+          const returnedPerson = await personsService.update(updatedPerson.id, updatedPerson);
+          console.log("Here is the response from put : ", returnedPerson);
+          console.log("id :", returnedPerson.id);
+          setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
+          setNewName('');
+          setNewNumber('');
+        }
+        updatePerson();
+      }
+    }
+    else {
+      const personObject = {
+        name: newName,
+        number: newNumber,
+        id: persons.length + 1,
+      }
+      const createPerson = async () => {
+        const returnedPerson = await personsService.create(personObject);
+        console.log("Here is the response from post : ", returnedPerson);
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      }
+      createPerson();     
+    }
   }
 
-  const remPerson = (id, name) => {
+  /*const remPerson = (id, name) => {
     if (window.confirm(`Do you really want to delete ${name} ?`))
     {
       personsService
@@ -106,7 +150,19 @@ const App = () => {
       
       
     }
-  }    
+  }*/
+  
+  const remPerson = (id, name) => {
+    if (window.confirm(`Do you really want to delete ${name} ?`))
+    {
+      const removePerson = async () => {
+        const returnedResponseData = await personsService.remove(id);
+        console.log("Here is the response from delete : ", returnedResponseData);
+        setPersons(persons.filter(p => p.id !== id));
+      }
+      removePerson();      
+    }
+  }
 
   const handleFilterNameChange =(event) => {
     setFilterName(event.target.value);

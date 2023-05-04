@@ -13,12 +13,12 @@ const create = newObject => axios
 
 const remove = id => axios
                        .delete(`${baseUrl}/${id}`)
-                       //.then(response => response.data);
+                       .then(response => {console.log('then of axios remove'); return response.data});
 
 
 const update = (id, newObject) => axios
                                     .put(`${baseUrl}/${id}`, newObject)
-                                    //.then(response => response.data);
+                                    .then(response => {console.log('then of axios update'); return response.data});
 
 // And that's how you do it using fetch() instead of axios
 // -------------------------------------------------------
