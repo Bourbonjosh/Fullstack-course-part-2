@@ -30,13 +30,20 @@ const App = () => {
       })
   }, [])*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     const loadInitialPersons = async () => {
       const initialPersons = await personsService.getAll();
       setPersons(initialPersons)
     }
     loadInitialPersons();
-  }, [])
+  }, [])*/
+
+  useEffect(() => {
+    console.log("par useeffect 2");
+    const initialPersons = personsService.getAll();
+    console.log("initialPersons :", initialPersons);
+    setPersons(initialPersons)
+    }, [])
   
   /*const axiosHook = () => {
     console.log('through axios hook');
