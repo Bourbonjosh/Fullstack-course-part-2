@@ -21,14 +21,21 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filterName, setFilterName] = useState('');
 
-  /*useEffect(() => {
-    //console.log("My useeffect");
+  
+  // With service - first way
+  
+  useEffect(() => {
+    console.log("My useeffect");
     personsService
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
-      })
-  }, [])*/
+      });
+      //console.log("persons :", persons)
+  }, [])
+
+
+  // With service - second way
 
   /*useEffect(() => {
     const loadInitialPersons = async () => {
@@ -38,12 +45,18 @@ const App = () => {
     loadInitialPersons();
   }, [])*/
 
-  useEffect(() => {
+  // Does not work (promise not fulfilled)
+  
+  /*useEffect(() => {
     console.log("par useeffect 2");
     const initialPersons = personsService.getAll();
     console.log("initialPersons :", initialPersons);
-    setPersons(initialPersons)
-    }, [])
+    console.log("---------------------------------------------------------------------------");
+    setPersons(initialPersons);
+    console.log("persons :", persons)
+    }, [])*/
+
+    // No service - with axios
   
   /*const axiosHook = () => {
     console.log('through axios hook');
@@ -58,8 +71,8 @@ const App = () => {
 
   useEffect(axiosHook, []);*/
 
-  // And that's how you do it using fetch() instead of axios
-  // -------------------------------------------------------
+  // And that's how you do it using fetch() instead of axios (no service)
+  // --------------------------------------------------------------------
   
   /*const fetchHook = () => {
     console.log('through fetch hook');
@@ -113,7 +126,7 @@ const App = () => {
 
   const addOrModifyPerson = (event) => {
     event.preventDefault();
-    const existingPerson = persons.find(p => p.name == newName);
+    const existingPerson = persons.find(p => p.name === newName);
     if (typeof existingPerson !== 'undefined') {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one ?`)) {
         const updatedPerson = {...existingPerson, number: newNumber};
